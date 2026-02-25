@@ -1,0 +1,16 @@
+import { Component, ChangeDetectionStrategy } from '@angular/core';
+
+@Component({
+  selector: 'app-history-detail',
+  standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  template: `
+    <div class="max-w-2xl mx-auto">
+      <h1 class="text-2xl font-bold text-gray-800 mb-6">Detalhes do Recurso</h1>
+      <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+        <p class="text-sm text-gray-400 italic">Detalhes serão implementados em EP-07</p>
+      </div>
+    </div>
+  `,
+})
+export class HistoryDetailComponent {}
