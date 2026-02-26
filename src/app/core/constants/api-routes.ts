@@ -6,6 +6,7 @@ export const API_ROUTES = {
     BASE: '/appeals',
     BY_ID: (id: string) => `/appeals/${id}` as const,
     GENERATE: (id: string) => `/appeals/${id}/generate` as const,
+    UPLOAD: (id: string) => `/appeals/${id}/upload` as const,
   },
   VEHICLES: {
     BASE: '/vehicles',
