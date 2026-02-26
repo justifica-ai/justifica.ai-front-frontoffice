@@ -9,6 +9,9 @@ export const API_ROUTES = {
     PREVIEW: (id: string) => `/appeals/${id}/preview` as const,
     PRICING: (id: string) => `/appeals/${id}/pricing` as const,
     UPLOAD: (id: string) => `/appeals/${id}/upload` as const,
+    PAY: (id: string) => `/appeals/${id}/pay` as const,
+    PAYMENT_STATUS: (id: string) => `/appeals/${id}/payment-status` as const,
+    DOWNLOAD: (id: string) => `/appeals/${id}/download` as const,
   },
   VEHICLES: {
     BASE: '/vehicles',
