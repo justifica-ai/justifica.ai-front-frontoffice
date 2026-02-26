@@ -16,6 +16,7 @@ export const API_ROUTES = {
   VEHICLES: {
     BASE: '/vehicles',
     BY_ID: (id: string) => `/vehicles/${id}` as const,
+    SET_DEFAULT: (id: string) => `/vehicles/${id}/default` as const,
   },
   PAYMENTS: {
     BASE: '/payments',
