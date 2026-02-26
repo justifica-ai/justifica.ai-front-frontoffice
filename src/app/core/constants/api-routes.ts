@@ -11,7 +11,7 @@ export const API_ROUTES = {
     UPLOAD: (id: string) => `/appeals/${id}/upload` as const,
     PAY: (id: string) => `/appeals/${id}/pay` as const,
     PAYMENT_STATUS: (id: string) => `/appeals/${id}/payment-status` as const,
-    DOWNLOAD: (id: string) => `/appeals/${id}/download` as const,
+    DOWNLOAD: (id: string) => `/appeals/${id}/document` as const,
   },
   VEHICLES: {
     BASE: '/vehicles',
