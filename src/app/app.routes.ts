@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 import { authGuard } from './core/guards/auth.guard';
 import { emailVerifiedGuard } from './core/guards/email-verified.guard';
 import { guestGuard } from './core/guards/guest.guard';
+import { onboardingGuard } from './core/guards/onboarding.guard';
 
 export const routes: Routes = [
   // ═══════ Auth (público) ═══════
@@ -31,7 +32,7 @@ export const routes: Routes = [
   // ═══════ App (autenticado) ═══════
   {
     path: '',
-    canActivate: [authGuard, emailVerifiedGuard],
+    canActivate: [authGuard, emailVerifiedGuard, onboardingGuard],
     loadComponent: () =>
       import('./layouts/app-layout/app-layout.component').then(
         (m) => m.AppLayoutComponent,

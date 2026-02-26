@@ -4,6 +4,9 @@ export const onboardingRoutes: Routes = [
   {
     path: '',
     title: 'Complete seu Perfil — Justifica.AI',
-    loadComponent: () => import('./pages/complete-profile/complete-profile.component').then((m) => m.CompleteProfileComponent),
+    loadComponent: () =>
+      import('./pages/onboarding-stepper/onboarding-stepper.component').then(
+        (m) => m.OnboardingStepperComponent,
+      ),
   },
 ];

@@ -25,6 +25,7 @@ export const API_ROUTES = {
   },
   PROFILE: {
     BASE: '/profile',
+    PREFERENCES: '/profile/preferences',
     CHANGE_PASSWORD: '/profile/change-password',
     DELETE_ACCOUNT: '/profile/delete-account',
     CONSENT: '/profile/consent',

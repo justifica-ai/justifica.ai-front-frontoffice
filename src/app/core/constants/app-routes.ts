@@ -7,6 +7,7 @@ export const APP_ROUTES = {
     VERIFY_EMAIL: '/auth/verify-email',
     CALLBACK: '/auth/callback',
   },
+  ONBOARDING: '/onboarding',
   APP: {
     DASHBOARD: '/',
     NEW_APPEAL: '/appeals/new',
