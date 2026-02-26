@@ -73,6 +73,13 @@ export class AuthService {
     });
   }
 
+  async resendVerificationEmail(email: string) {
+    return this.supabase.auth.resend({
+      type: 'signup',
+      email,
+    });
+  }
+
   async updatePassword(newPassword: string) {
     return this.supabase.auth.updateUser({ password: newPassword });
   }
