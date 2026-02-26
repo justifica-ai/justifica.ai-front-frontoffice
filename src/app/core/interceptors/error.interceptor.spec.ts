@@ -1,30 +1,22 @@
 import { TestBed } from '@angular/core/testing';
 import { HttpClient, HttpErrorResponse, provideHttpClient, withInterceptors } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
-import { Router } from '@angular/router';
 import { errorInterceptor } from './error.interceptor';
 import { ToastService } from '../services/toast.service';
-import { AuthService } from '../services/auth.service';
 
 describe('errorInterceptor', () => {
   let http: HttpClient;
   let httpTesting: HttpTestingController;
   let toastService: jasmine.SpyObj<ToastService>;
-  let authService: jasmine.SpyObj<AuthService>;
-  let router: jasmine.SpyObj<Router>;
 
   beforeEach(() => {
     toastService = jasmine.createSpyObj('ToastService', ['success', 'error', 'warning', 'info']);
-    authService = jasmine.createSpyObj('AuthService', ['signOut']);
-    router = jasmine.createSpyObj('Router', ['navigate']);
 
     TestBed.configureTestingModule({
       providers: [
         provideHttpClient(withInterceptors([errorInterceptor])),
         provideHttpClientTesting(),
         { provide: ToastService, useValue: toastService },
-        { provide: AuthService, useValue: authService },
-        { provide: Router, useValue: router },
       ],
     });
 
@@ -36,14 +28,12 @@ describe('errorInterceptor', () => {
     httpTesting.verify();
   });
 
-  it('should handle 401 by signing out and redirecting to login', () => {
+  it('should NOT handle 401 (delegated to authInterceptor)', () => {
     http.get('/api/test').subscribe({ error: () => {} });
     const req = httpTesting.expectOne('/api/test');
     req.flush('Unauthorized', { status: 401, statusText: 'Unauthorized' });
 
-    expect(authService.signOut).toHaveBeenCalled();
-    expect(router.navigate).toHaveBeenCalledWith(['/auth/login']);
-    expect(toastService.error).toHaveBeenCalledWith('Sessão expirada', 'Faça login novamente.');
+    expect(toastService.error).not.toHaveBeenCalled();
   });
 
   it('should handle 403 with access denied toast', () => {

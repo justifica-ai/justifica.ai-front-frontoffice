@@ -1,24 +1,15 @@
 import { HttpInterceptorFn, HttpErrorResponse } from '@angular/common/http';
 import { inject } from '@angular/core';
-import { Router } from '@angular/router';
 import { catchError, throwError } from 'rxjs';
 import { ToastService } from '../services/toast.service';
-import { AuthService } from '../services/auth.service';
-import { APP_ROUTES } from '../constants/app-routes';
 
 export const errorInterceptor: HttpInterceptorFn = (req, next) => {
   const toast = inject(ToastService);
-  const auth = inject(AuthService);
-  const router = inject(Router);
 
   return next(req).pipe(
     catchError((error: HttpErrorResponse) => {
       switch (error.status) {
-        case 401:
-          auth.signOut();
-          router.navigate([APP_ROUTES.AUTH.LOGIN]);
-          toast.error('Sessão expirada', 'Faça login novamente.');
-          break;
+        // 401 is handled by authInterceptor (token refresh + redirect)
         case 403:
           toast.error('Acesso negado', 'Você não tem permissão para esta ação.');
           break;
