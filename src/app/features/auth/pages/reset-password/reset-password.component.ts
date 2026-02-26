@@ -1,56 +1,18 @@
 import { Component, ChangeDetectionStrategy, inject, signal, OnInit, computed } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { ReactiveFormsModule, FormBuilder, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
+import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { AuthService } from '../../../../core/services/auth.service';
 import { ToastService } from '../../../../core/services/toast.service';
 import { APP_ROUTES } from '../../../../core/constants/app-routes';
+import {
+  calculateStrength,
+  passwordStrengthValidator,
+  passwordMatchValidator,
+} from '../../../../shared/utils/validators';
 
-const PASSWORD_MIN_LENGTH = 8;
-
-function passwordStrengthValidator(control: AbstractControl): ValidationErrors | null {
-  const value = control.value as string;
-  if (!value) return null;
-
-  const hasUpperCase = /[A-Z]/.test(value);
-  const hasLowerCase = /[a-z]/.test(value);
-  const hasNumber = /[0-9]/.test(value);
-  const hasSpecial = /[!@#$%^&*(),.?":{}|<>]/.test(value);
-  const hasMinLength = value.length >= PASSWORD_MIN_LENGTH;
-
-  if (!hasUpperCase || !hasLowerCase || !hasNumber || !hasSpecial || !hasMinLength) {
-    return { passwordStrength: true };
-  }
-  return null;
-}
-
-function passwordMatchValidator(group: AbstractControl): ValidationErrors | null {
-  const password = group.get('newPassword')?.value as string;
-  const confirm = group.get('confirmPassword')?.value as string;
-  if (password && confirm && password !== confirm) {
-    return { passwordMismatch: true };
-  }
-  return null;
-}
-
-export type PasswordStrengthLevel = 'weak' | 'medium' | 'strong' | 'very-strong';
-
-export function calculateStrength(password: string): { level: PasswordStrengthLevel; percent: number } {
-  if (!password) return { level: 'weak', percent: 0 };
-
-  let score = 0;
-  if (password.length >= PASSWORD_MIN_LENGTH) score++;
-  if (password.length >= 12) score++;
-  if (/[A-Z]/.test(password)) score++;
-  if (/[a-z]/.test(password)) score++;
-  if (/[0-9]/.test(password)) score++;
-  if (/[!@#$%^&*(),.?":{}|<>]/.test(password)) score++;
-
-  if (score <= 2) return { level: 'weak', percent: 25 };
-  if (score <= 3) return { level: 'medium', percent: 50 };
-  if (score <= 5) return { level: 'strong', percent: 75 };
-  return { level: 'very-strong', percent: 100 };
-}
+// Re-export for backward compatibility with tests
+export { calculateStrength, type PasswordStrengthLevel } from '../../../../shared/utils/validators';
 
 @Component({
   selector: 'app-reset-password',
