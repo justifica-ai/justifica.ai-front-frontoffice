@@ -4,7 +4,16 @@ export const appealRoutes: Routes = [
   {
     path: 'new',
     title: 'Novo Recurso — Justifica.AI',
-    loadComponent: () => import('./pages/new-appeal/new-appeal.component').then((m) => m.NewAppealComponent),
+    loadComponent: () =>
+      import('./pages/resource-type-selection/resource-type-selection.component').then(
+        (m) => m.ResourceTypeSelectionComponent,
+      ),
+  },
+  {
+    path: 'new/form',
+    title: 'Formulário de Recurso — Justifica.AI',
+    loadComponent: () =>
+      import('./pages/new-appeal/new-appeal.component').then((m) => m.NewAppealComponent),
   },
   {
     path: ':id/preview',
