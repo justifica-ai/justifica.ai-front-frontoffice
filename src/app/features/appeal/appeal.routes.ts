@@ -21,6 +21,14 @@ export const appealRoutes: Routes = [
     loadComponent: () => import('./pages/appeal-preview/appeal-preview.component').then((m) => m.AppealPreviewComponent),
   },
   {
+    path: ':id/generating',
+    title: 'Gerando Recurso — Justifica.AI',
+    loadComponent: () =>
+      import('./pages/generation-progress/generation-progress.component').then(
+        (m) => m.GenerationProgressComponent,
+      ),
+  },
+  {
     path: ':id',
     title: 'Detalhes do Recurso — Justifica.AI',
     loadComponent: () => import('./pages/appeal-detail/appeal-detail.component').then((m) => m.AppealDetailComponent),
