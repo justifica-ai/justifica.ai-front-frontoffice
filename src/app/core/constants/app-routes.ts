@@ -14,6 +14,7 @@ export const APP_ROUTES = {
     APPEAL_PREVIEW: '/appeals/:id/preview',
     APPEAL_GENERATING: '/appeals/:id/generating',
     PAYMENT: '/payment/:id',
+    PAYMENT_PIX: '/payment/:id/pix',
     PAYMENT_SUCCESS: '/payment/:id/success',
     HISTORY: '/history',
     HISTORY_DETAIL: '/history/:id',

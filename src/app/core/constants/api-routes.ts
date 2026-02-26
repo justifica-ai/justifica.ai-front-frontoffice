@@ -7,6 +7,7 @@ export const API_ROUTES = {
     BY_ID: (id: string) => `/appeals/${id}` as const,
     GENERATE: (id: string) => `/appeals/${id}/generate` as const,
     PREVIEW: (id: string) => `/appeals/${id}/preview` as const,
+    PRICING: (id: string) => `/appeals/${id}/pricing` as const,
     UPLOAD: (id: string) => `/appeals/${id}/upload` as const,
   },
   VEHICLES: {

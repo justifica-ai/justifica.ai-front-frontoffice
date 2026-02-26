@@ -3,6 +3,11 @@ import { Routes } from '@angular/router';
 export const paymentRoutes: Routes = [
   {
     path: ':id',
+    title: 'Pagamento — Justifica.AI',
+    loadComponent: () => import('./pages/paywall/paywall.component').then((m) => m.PaywallComponent),
+  },
+  {
+    path: ':id/pix',
     title: 'Pagamento PIX — Justifica.AI',
     loadComponent: () => import('./pages/pix-payment/pix-payment.component').then((m) => m.PixPaymentComponent),
   },
