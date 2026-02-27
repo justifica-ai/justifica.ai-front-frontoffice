@@ -2,6 +2,7 @@ import { Component, ChangeDetectionStrategy, signal, inject } from '@angular/cor
 import { RouterOutlet, RouterLink, RouterLinkActive, Router } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
 import { APP_ROUTES } from '../../core/constants/app-routes';
+import { NotificationBellComponent } from '../../features/notifications/components/notification-bell/notification-bell.component';
 
 interface NavItem {
   label: string;
@@ -12,7 +13,7 @@ interface NavItem {
 @Component({
   selector: 'app-app-layout',
   standalone: true,
-  imports: [RouterOutlet, RouterLink, RouterLinkActive],
+  imports: [RouterOutlet, RouterLink, RouterLinkActive, NotificationBellComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <!-- Mobile Header -->
@@ -22,12 +23,7 @@ interface NavItem {
         <span class="text-lg font-bold text-brand-500">.AI</span>
       </a>
       <div class="flex items-center gap-3">
-        <a [routerLink]="[routes.APP.NOTIFICATIONS]" class="relative p-2 text-gray-500 hover:text-brand-600" aria-label="Notificações">
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
-               stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/>
-          </svg>
-        </a>
+        <app-notification-bell />
         <button (click)="toggleMobileMenu()" class="p-2 text-gray-500 hover:text-brand-600" [attr.aria-label]="mobileMenuOpen() ? 'Fechar menu' : 'Abrir menu'" [attr.aria-expanded]="mobileMenuOpen()">
           @if (mobileMenuOpen()) {
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
@@ -100,12 +96,7 @@ interface NavItem {
 
     <!-- Desktop Header -->
     <header class="hidden lg:flex fixed top-0 left-60 right-0 z-10 h-16 bg-white border-b border-gray-200 px-6 items-center justify-end gap-4">
-      <a [routerLink]="[routes.APP.NOTIFICATIONS]" class="relative p-2 text-gray-500 hover:text-brand-600 rounded-lg hover:bg-gray-100 transition-colors" aria-label="Notificações">
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
-             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/>
-        </svg>
-      </a>
+      <app-notification-bell />
     </header>
 
     <!-- Main Content -->

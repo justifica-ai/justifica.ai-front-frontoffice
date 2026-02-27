@@ -3,6 +3,7 @@ import { provideRouter } from '@angular/router';
 import { signal } from '@angular/core';
 import { AppLayoutComponent } from './app-layout.component';
 import { AuthService } from '../../core/services/auth.service';
+import { NotificationService } from '../../core/services/notification.service';
 
 describe('AppLayoutComponent', () => {
   let component: AppLayoutComponent;
@@ -16,6 +17,25 @@ describe('AppLayoutComponent', () => {
     signOut: jasmine.createSpy('signOut').and.returnValue(Promise.resolve()),
   };
 
+  const mockNotificationService = {
+    notifications: signal([] as unknown[]),
+    unreadCount: signal(0),
+    loading: signal(false),
+    total: signal(0),
+    currentPage: signal(1),
+    hasMore: signal(false),
+    fetchUnreadCount: jasmine.createSpy('fetchUnreadCount').and.returnValue(Promise.resolve()),
+    loadNotifications: jasmine.createSpy('loadNotifications').and.returnValue(Promise.resolve()),
+    loadMore: jasmine.createSpy('loadMore').and.returnValue(Promise.resolve()),
+    markAsRead: jasmine.createSpy('markAsRead').and.returnValue(Promise.resolve()),
+    markAllAsRead: jasmine.createSpy('markAllAsRead').and.returnValue(Promise.resolve()),
+    subscribeRealtime: jasmine.createSpy('subscribeRealtime'),
+    unsubscribeRealtime: jasmine.createSpy('unsubscribeRealtime'),
+    getRelativeTime: jasmine.createSpy('getRelativeTime').and.returnValue('Agora'),
+    resetState: jasmine.createSpy('resetState'),
+    ngOnDestroy: jasmine.createSpy('ngOnDestroy'),
+  };
+
   beforeEach(async () => {
     mockAuthService.signOut.calls.reset();
 
@@ -24,6 +44,7 @@ describe('AppLayoutComponent', () => {
       providers: [
         provideRouter([]),
         { provide: AuthService, useValue: mockAuthService },
+        { provide: NotificationService, useValue: mockNotificationService },
       ],
     }).compileComponents();
 
