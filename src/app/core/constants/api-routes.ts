@@ -36,8 +36,10 @@ export const API_ROUTES = {
   AFFILIATES: {
     BASE: '/affiliates',
     APPLY: '/affiliates/apply',
-    CONVERSIONS: '/affiliates/conversions',
-    WITHDRAWALS: '/affiliates/withdrawals',
+    ME: '/affiliates/me',
+    ME_LINK: '/affiliates/me/link',
+    ME_WITHDRAWALS: '/affiliates/me/withdrawals',
+    ME_CONVERSIONS: '/affiliates/me/conversions',
   },
   NOTIFICATIONS: {
     BASE: '/notifications',
