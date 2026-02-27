@@ -23,6 +23,7 @@ export const APP_ROUTES = {
     VEHICLES: '/profile/vehicles',
     CHANGE_PASSWORD: '/profile/change-password',
     PRIVACY: '/profile/privacy',
+    COMMUNICATION: '/profile/communication',
     DELETE_ACCOUNT: '/profile/delete-account',
     AFFILIATE: '/affiliate',
     AFFILIATE_APPLY: '/affiliate/apply',

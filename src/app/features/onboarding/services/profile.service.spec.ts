@@ -212,4 +212,167 @@ describe('ProfileService', () => {
       expect(rejected).toBeTrue();
     }));
   });
+
+  describe('changePassword', () => {
+    it('should send PATCH request with password data', fakeAsync(() => {
+      const input = { currentPassword: 'old', newPassword: 'new12345' };
+      service.changePassword(input);
+      tick();
+      const req = httpMock.expectOne(`${environment.apiUrl}${API_ROUTES.PROFILE.CHANGE_PASSWORD}`);
+      expect(req.request.method).toBe('PATCH');
+      expect(req.request.body).toEqual(input);
+      req.flush({});
+      tick();
+    }));
+
+    it('should set error on failure', fakeAsync(() => {
+      const input = { currentPassword: 'old', newPassword: 'new12345' };
+      service.changePassword(input).catch(() => { /* expected rejection */ });
+      tick();
+      httpMock.expectOne(`${environment.apiUrl}${API_ROUTES.PROFILE.CHANGE_PASSWORD}`)
+        .flush('Error', { status: 400, statusText: 'Bad Request' });
+      tick();
+      expect(service.error()).toBeTruthy();
+    }));
+
+    it('should reject promise on failure', fakeAsync(() => {
+      let rejected = false;
+      const input = { currentPassword: 'old', newPassword: 'new12345' };
+      service.changePassword(input).catch(() => { rejected = true; });
+      tick();
+      httpMock.expectOne(`${environment.apiUrl}${API_ROUTES.PROFILE.CHANGE_PASSWORD}`)
+        .flush('Error', { status: 400, statusText: 'Bad Request' });
+      tick();
+      expect(rejected).toBeTrue();
+    }));
+  });
+
+  describe('loadSessions', () => {
+    it('should send GET request and return sessions', fakeAsync(() => {
+      const mockSessions = [
+        { id: 's1', device: 'Chrome', ipMasked: '10.*.1', lastAccessAt: '2025-01-01', isCurrent: true },
+      ];
+      let result: unknown;
+      service.loadSessions().then((r) => { result = r; });
+      tick();
+      const req = httpMock.expectOne(`${environment.apiUrl}${API_ROUTES.PROFILE.SESSIONS}`);
+      expect(req.request.method).toBe('GET');
+      req.flush(mockSessions);
+      tick();
+      expect(result).toEqual(mockSessions);
+    }));
+
+    it('should set error on failure', fakeAsync(() => {
+      service.loadSessions().catch(() => { /* expected rejection */ });
+      tick();
+      httpMock.expectOne(`${environment.apiUrl}${API_ROUTES.PROFILE.SESSIONS}`)
+        .flush('Error', { status: 500, statusText: 'Server Error' });
+      tick();
+      expect(service.error()).toBeTruthy();
+    }));
+
+    it('should reject promise on failure', fakeAsync(() => {
+      let rejected = false;
+      service.loadSessions().catch(() => { rejected = true; });
+      tick();
+      httpMock.expectOne(`${environment.apiUrl}${API_ROUTES.PROFILE.SESSIONS}`)
+        .flush('Error', { status: 500, statusText: 'Server Error' });
+      tick();
+      expect(rejected).toBeTrue();
+    }));
+  });
+
+  describe('endSession', () => {
+    it('should send DELETE request with session id', fakeAsync(() => {
+      service.endSession('s-123');
+      tick();
+      const req = httpMock.expectOne(`${environment.apiUrl}${API_ROUTES.PROFILE.SESSION_BY_ID('s-123')}`);
+      expect(req.request.method).toBe('DELETE');
+      req.flush({});
+      tick();
+    }));
+
+    it('should set error on failure', fakeAsync(() => {
+      service.endSession('s-123').catch(() => { /* expected rejection */ });
+      tick();
+      httpMock.expectOne(`${environment.apiUrl}${API_ROUTES.PROFILE.SESSION_BY_ID('s-123')}`)
+        .flush('Error', { status: 404, statusText: 'Not Found' });
+      tick();
+      expect(service.error()).toBeTruthy();
+    }));
+
+    it('should reject promise on failure', fakeAsync(() => {
+      let rejected = false;
+      service.endSession('s-123').catch(() => { rejected = true; });
+      tick();
+      httpMock.expectOne(`${environment.apiUrl}${API_ROUTES.PROFILE.SESSION_BY_ID('s-123')}`)
+        .flush('Error', { status: 404, statusText: 'Not Found' });
+      tick();
+      expect(rejected).toBeTrue();
+    }));
+  });
+
+  describe('exportData', () => {
+    it('should send GET request with blob response', fakeAsync(() => {
+      const mockBlob = new Blob(['{}'], { type: 'application/json' });
+      let result: unknown;
+      service.exportData().then((r) => { result = r; });
+      tick();
+      const req = httpMock.expectOne(`${environment.apiUrl}${API_ROUTES.PROFILE.EXPORT_DATA}`);
+      expect(req.request.method).toBe('GET');
+      expect(req.request.responseType).toBe('blob');
+      req.flush(mockBlob);
+      tick();
+      expect(result).toBeTruthy();
+    }));
+
+    it('should set error on failure', fakeAsync(() => {
+      service.exportData().catch(() => { /* expected rejection */ });
+      tick();
+      httpMock.expectOne(`${environment.apiUrl}${API_ROUTES.PROFILE.EXPORT_DATA}`)
+        .error(new ProgressEvent('error'), { status: 500, statusText: 'Server Error' });
+      tick();
+      expect(service.error()).toBeTruthy();
+    }));
+
+    it('should reject promise on failure', fakeAsync(() => {
+      let rejected = false;
+      service.exportData().catch(() => { rejected = true; });
+      tick();
+      httpMock.expectOne(`${environment.apiUrl}${API_ROUTES.PROFILE.EXPORT_DATA}`)
+        .error(new ProgressEvent('error'), { status: 500, statusText: 'Server Error' });
+      tick();
+      expect(rejected).toBeTrue();
+    }));
+  });
+
+  describe('deleteAccount', () => {
+    it('should send DELETE request', fakeAsync(() => {
+      service.deleteAccount();
+      tick();
+      const req = httpMock.expectOne(`${environment.apiUrl}${API_ROUTES.PROFILE.DELETE_ACCOUNT}`);
+      expect(req.request.method).toBe('DELETE');
+      req.flush({});
+      tick();
+    }));
+
+    it('should set error on failure', fakeAsync(() => {
+      service.deleteAccount().catch(() => { /* expected rejection */ });
+      tick();
+      httpMock.expectOne(`${environment.apiUrl}${API_ROUTES.PROFILE.DELETE_ACCOUNT}`)
+        .flush('Error', { status: 500, statusText: 'Server Error' });
+      tick();
+      expect(service.error()).toBeTruthy();
+    }));
+
+    it('should reject promise on failure', fakeAsync(() => {
+      let rejected = false;
+      service.deleteAccount().catch(() => { rejected = true; });
+      tick();
+      httpMock.expectOne(`${environment.apiUrl}${API_ROUTES.PROFILE.DELETE_ACCOUNT}`)
+        .flush('Error', { status: 500, statusText: 'Server Error' });
+      tick();
+      expect(rejected).toBeTrue();
+    }));
+  });
 });

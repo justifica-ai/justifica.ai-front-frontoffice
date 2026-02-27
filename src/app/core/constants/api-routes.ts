@@ -29,6 +29,9 @@ export const API_ROUTES = {
     CHANGE_PASSWORD: '/profile/change-password',
     DELETE_ACCOUNT: '/profile/delete-account',
     CONSENT: '/profile/consent',
+    SESSIONS: '/profile/sessions',
+    SESSION_BY_ID: (id: string) => `/profile/sessions/${id}` as const,
+    EXPORT_DATA: '/profile/export-data',
   },
   AFFILIATES: {
     BASE: '/affiliates',
