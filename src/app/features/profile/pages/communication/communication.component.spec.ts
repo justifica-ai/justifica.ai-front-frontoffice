@@ -9,6 +9,7 @@ const MOCK_PROFILE: UserProfile = {
   email: 'test@example.com',
   fullName: 'Test User',
   role: 'user',
+  status: 'active',
   emailVerified: true,
   onboardingCompleted: true,
   communicationPreferences: { emailMarketing: true, whatsapp: false, sms: false },

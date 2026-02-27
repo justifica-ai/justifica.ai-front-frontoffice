@@ -12,6 +12,7 @@ const MOCK_PROFILE: UserProfile = {
   fullName: 'Test User',
   phone: '11999999999',
   role: 'user',
+  status: 'active',
   emailVerified: true,
   onboardingCompleted: true,
   createdAt: '2025-01-01T00:00:00.000Z',

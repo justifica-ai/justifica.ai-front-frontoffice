@@ -12,6 +12,7 @@ const MOCK_PROFILE: UserProfile = {
   fullName: 'Test User',
   phone: '11999999999',
   role: 'user',
+  status: 'active',
   emailVerified: true,
   onboardingCompleted: false,
   createdAt: '2025-01-01T00:00:00.000Z',
@@ -312,13 +313,45 @@ describe('ProfileService', () => {
     }));
   });
 
-  describe('exportData', () => {
+  describe('requestDataExport', () => {
+    it('should send POST request to data export endpoint', fakeAsync(() => {
+      let result: unknown;
+      service.requestDataExport().then((r) => { result = r; });
+      tick();
+      const req = httpMock.expectOne(`${environment.apiUrl}${API_ROUTES.PROFILE.DATA_EXPORT}`);
+      expect(req.request.method).toBe('POST');
+      req.flush({ message: 'Export started' });
+      tick();
+      expect(result).toEqual({ message: 'Export started' });
+    }));
+
+    it('should set error on failure', fakeAsync(() => {
+      service.requestDataExport().catch(() => { /* expected rejection */ });
+      tick();
+      httpMock.expectOne(`${environment.apiUrl}${API_ROUTES.PROFILE.DATA_EXPORT}`)
+        .flush('Error', { status: 429, statusText: 'Too Many Requests' });
+      tick();
+      expect(service.error()).toBeTruthy();
+    }));
+
+    it('should reject promise on failure', fakeAsync(() => {
+      let rejected = false;
+      service.requestDataExport().catch(() => { rejected = true; });
+      tick();
+      httpMock.expectOne(`${environment.apiUrl}${API_ROUTES.PROFILE.DATA_EXPORT}`)
+        .flush('Error', { status: 429, statusText: 'Too Many Requests' });
+      tick();
+      expect(rejected).toBeTrue();
+    }));
+  });
+
+  describe('downloadDataExport', () => {
     it('should send GET request with blob response', fakeAsync(() => {
       const mockBlob = new Blob(['{}'], { type: 'application/json' });
       let result: unknown;
-      service.exportData().then((r) => { result = r; });
+      service.downloadDataExport().then((r) => { result = r; });
       tick();
-      const req = httpMock.expectOne(`${environment.apiUrl}${API_ROUTES.PROFILE.EXPORT_DATA}`);
+      const req = httpMock.expectOne(`${environment.apiUrl}${API_ROUTES.PROFILE.DATA_EXPORT_DOWNLOAD}`);
       expect(req.request.method).toBe('GET');
       expect(req.request.responseType).toBe('blob');
       req.flush(mockBlob);
@@ -327,50 +360,118 @@ describe('ProfileService', () => {
     }));
 
     it('should set error on failure', fakeAsync(() => {
-      service.exportData().catch(() => { /* expected rejection */ });
+      service.downloadDataExport().catch(() => { /* expected rejection */ });
       tick();
-      httpMock.expectOne(`${environment.apiUrl}${API_ROUTES.PROFILE.EXPORT_DATA}`)
-        .error(new ProgressEvent('error'), { status: 500, statusText: 'Server Error' });
+      httpMock.expectOne(`${environment.apiUrl}${API_ROUTES.PROFILE.DATA_EXPORT_DOWNLOAD}`)
+        .error(new ProgressEvent('error'), { status: 404, statusText: 'Not Found' });
       tick();
       expect(service.error()).toBeTruthy();
     }));
 
     it('should reject promise on failure', fakeAsync(() => {
       let rejected = false;
-      service.exportData().catch(() => { rejected = true; });
+      service.downloadDataExport().catch(() => { rejected = true; });
       tick();
-      httpMock.expectOne(`${environment.apiUrl}${API_ROUTES.PROFILE.EXPORT_DATA}`)
-        .error(new ProgressEvent('error'), { status: 500, statusText: 'Server Error' });
+      httpMock.expectOne(`${environment.apiUrl}${API_ROUTES.PROFILE.DATA_EXPORT_DOWNLOAD}`)
+        .error(new ProgressEvent('error'), { status: 404, statusText: 'Not Found' });
       tick();
       expect(rejected).toBeTrue();
     }));
   });
 
-  describe('deleteAccount', () => {
-    it('should send DELETE request', fakeAsync(() => {
-      service.deleteAccount();
+  describe('requestDeletion', () => {
+    it('should send POST request with password', fakeAsync(() => {
+      let result: unknown;
+      service.requestDeletion('mypassword').then((r) => { result = r; });
       tick();
-      const req = httpMock.expectOne(`${environment.apiUrl}${API_ROUTES.PROFILE.DELETE_ACCOUNT}`);
-      expect(req.request.method).toBe('DELETE');
-      req.flush({});
+      const req = httpMock.expectOne(`${environment.apiUrl}${API_ROUTES.PROFILE.DELETE_REQUEST}`);
+      expect(req.request.method).toBe('POST');
+      expect(req.request.body).toEqual({ password: 'mypassword' });
+      req.flush({ message: 'Deletion requested' });
       tick();
+      expect(result).toEqual({ message: 'Deletion requested' });
     }));
 
     it('should set error on failure', fakeAsync(() => {
-      service.deleteAccount().catch(() => { /* expected rejection */ });
+      service.requestDeletion('wrong').catch(() => { /* expected rejection */ });
       tick();
-      httpMock.expectOne(`${environment.apiUrl}${API_ROUTES.PROFILE.DELETE_ACCOUNT}`)
-        .flush('Error', { status: 500, statusText: 'Server Error' });
+      httpMock.expectOne(`${environment.apiUrl}${API_ROUTES.PROFILE.DELETE_REQUEST}`)
+        .flush('Error', { status: 401, statusText: 'Unauthorized' });
       tick();
       expect(service.error()).toBeTruthy();
     }));
 
     it('should reject promise on failure', fakeAsync(() => {
       let rejected = false;
-      service.deleteAccount().catch(() => { rejected = true; });
+      service.requestDeletion('wrong').catch(() => { rejected = true; });
       tick();
-      httpMock.expectOne(`${environment.apiUrl}${API_ROUTES.PROFILE.DELETE_ACCOUNT}`)
-        .flush('Error', { status: 500, statusText: 'Server Error' });
+      httpMock.expectOne(`${environment.apiUrl}${API_ROUTES.PROFILE.DELETE_REQUEST}`)
+        .flush('Error', { status: 401, statusText: 'Unauthorized' });
+      tick();
+      expect(rejected).toBeTrue();
+    }));
+  });
+
+  describe('cancelDeletion', () => {
+    it('should send DELETE request', fakeAsync(() => {
+      let result: unknown;
+      service.cancelDeletion().then((r) => { result = r; });
+      tick();
+      const req = httpMock.expectOne(`${environment.apiUrl}${API_ROUTES.PROFILE.DELETE_REQUEST}`);
+      expect(req.request.method).toBe('DELETE');
+      req.flush({ message: 'Deletion cancelled' });
+      tick();
+      expect(result).toEqual({ message: 'Deletion cancelled' });
+    }));
+
+    it('should set error on failure', fakeAsync(() => {
+      service.cancelDeletion().catch(() => { /* expected rejection */ });
+      tick();
+      httpMock.expectOne(`${environment.apiUrl}${API_ROUTES.PROFILE.DELETE_REQUEST}`)
+        .flush('Error', { status: 409, statusText: 'Conflict' });
+      tick();
+      expect(service.error()).toBeTruthy();
+    }));
+
+    it('should reject promise on failure', fakeAsync(() => {
+      let rejected = false;
+      service.cancelDeletion().catch(() => { rejected = true; });
+      tick();
+      httpMock.expectOne(`${environment.apiUrl}${API_ROUTES.PROFILE.DELETE_REQUEST}`)
+        .flush('Error', { status: 409, statusText: 'Conflict' });
+      tick();
+      expect(rejected).toBeTrue();
+    }));
+  });
+
+  describe('revokeConsent', () => {
+    it('should send POST request with consent type', fakeAsync(() => {
+      let result: unknown;
+      service.revokeConsent('marketing_consent').then((r) => { result = r; });
+      tick();
+      const req = httpMock.expectOne(`${environment.apiUrl}${API_ROUTES.PROFILE.REVOKE_CONSENT}`);
+      expect(req.request.method).toBe('POST');
+      expect(req.request.body).toEqual({ consentType: 'marketing_consent' });
+      req.flush({ message: 'Consent revoked' });
+      tick();
+      expect(result).toEqual({ message: 'Consent revoked' });
+    }));
+
+    it('should set error on failure', fakeAsync(() => {
+      service.revokeConsent('marketing_consent').catch(() => { /* expected rejection */ });
+      tick();
+      httpMock.expectOne(`${environment.apiUrl}${API_ROUTES.PROFILE.REVOKE_CONSENT}`)
+        .flush('Error', { status: 400, statusText: 'Bad Request' });
+      tick();
+      expect(service.error()).toBeTruthy();
+    }));
+
+    it('should reject promise on failure', fakeAsync(() => {
+      let rejected = false;
+      service.revokeConsent('marketing_consent').catch(() => { rejected = true; });
+      tick();
+      httpMock.expectOne(`${environment.apiUrl}${API_ROUTES.PROFILE.REVOKE_CONSENT}`)
+        .flush('Error', { status: 400, statusText: 'Bad Request' });
       tick();
       expect(rejected).toBeTrue();
     }));

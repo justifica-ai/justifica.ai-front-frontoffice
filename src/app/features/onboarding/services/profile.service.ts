@@ -117,31 +117,80 @@ export class ProfileService {
     }
   }
 
-  async exportData(): Promise<Blob> {
+  async requestDataExport(): Promise<{ message: string }> {
     try {
-      const blob = await firstValueFrom(
-        this.http.get(
-          `${environment.apiUrl}${API_ROUTES.PROFILE.EXPORT_DATA}`,
-          { responseType: 'blob' },
+      const result = await firstValueFrom(
+        this.http.post<{ message: string }>(
+          `${environment.apiUrl}${API_ROUTES.PROFILE.DATA_EXPORT}`,
+          {},
         ),
       );
-      return blob;
+      return result;
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Erro ao exportar dados';
+      const message = error instanceof Error ? error.message : 'Erro ao solicitar exportação de dados';
       this._error.set(message);
       throw error;
     }
   }
 
-  async deleteAccount(): Promise<void> {
+  async downloadDataExport(): Promise<Blob> {
     try {
-      await firstValueFrom(
-        this.http.delete(
-          `${environment.apiUrl}${API_ROUTES.PROFILE.DELETE_ACCOUNT}`,
+      const blob = await firstValueFrom(
+        this.http.get(
+          `${environment.apiUrl}${API_ROUTES.PROFILE.DATA_EXPORT_DOWNLOAD}`,
+          { responseType: 'blob' },
         ),
       );
+      return blob;
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Erro ao excluir conta';
+      const message = error instanceof Error ? error.message : 'Erro ao baixar exportação de dados';
+      this._error.set(message);
+      throw error;
+    }
+  }
+
+  async requestDeletion(password: string): Promise<{ message: string }> {
+    try {
+      const result = await firstValueFrom(
+        this.http.post<{ message: string }>(
+          `${environment.apiUrl}${API_ROUTES.PROFILE.DELETE_REQUEST}`,
+          { password },
+        ),
+      );
+      return result;
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Erro ao solicitar exclusão de conta';
+      this._error.set(message);
+      throw error;
+    }
+  }
+
+  async cancelDeletion(): Promise<{ message: string }> {
+    try {
+      const result = await firstValueFrom(
+        this.http.delete<{ message: string }>(
+          `${environment.apiUrl}${API_ROUTES.PROFILE.DELETE_REQUEST}`,
+        ),
+      );
+      return result;
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Erro ao cancelar exclusão de conta';
+      this._error.set(message);
+      throw error;
+    }
+  }
+
+  async revokeConsent(consentType: string): Promise<{ message: string }> {
+    try {
+      const result = await firstValueFrom(
+        this.http.post<{ message: string }>(
+          `${environment.apiUrl}${API_ROUTES.PROFILE.REVOKE_CONSENT}`,
+          { consentType },
+        ),
+      );
+      return result;
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Erro ao revogar consentimento';
       this._error.set(message);
       throw error;
     }

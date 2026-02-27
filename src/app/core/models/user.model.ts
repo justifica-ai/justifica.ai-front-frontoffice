@@ -1,3 +1,5 @@
+export type UserStatus = 'pending_verification' | 'active' | 'suspended' | 'pending_deletion' | 'deleted';
+
 export interface UserProfile {
   id: string;
   email: string;
@@ -7,6 +9,7 @@ export interface UserProfile {
   emailVerified: boolean;
   onboardingCompleted: boolean;
   role: UserRole;
+  status: UserStatus;
   affiliateCode?: string;
   communicationPreferences?: CommunicationPreferences;
   createdAt: string;
